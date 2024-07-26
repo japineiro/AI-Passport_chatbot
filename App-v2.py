@@ -8,7 +8,7 @@ st.set_page_config(
     page_icon="assistant"
 )
 
-openai_api_key = 'sk-proj-oIDd9Fvr2GHbBfUeJu8hT3BlbkFJUllJkPr9K1pe274OLEZY'
+openai_api_key = 'sk-proj-PoS1slcYlB7i4iCCAE1DT3BlbkFJiHdbcCpYFkS9OKYJCqq1'
 
 # Define LLM model
 def generate_response(input_text):
