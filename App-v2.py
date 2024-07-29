@@ -17,7 +17,7 @@ def generate_response(input_text):
         model_name='gpt-3.5-turbo-instruct',
         temperature=0.7,
         max_tokens=-1,
-        OPENAI_API_KEY=OPENAI_API_KEY
+        openai_api_key=os.environ['OPENAI_API_KEY']
     )
     return llm(input_text)
 
