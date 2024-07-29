@@ -3,4 +3,3 @@ langchain-community
 pyperclip
 openai
 tiktoken
-os
