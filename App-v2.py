@@ -1,6 +1,7 @@
 import streamlit as st
 from langchain_community.llms import OpenAI
 import pyperclip
+import os
 
 st.set_page_config(
     layout="wide",
@@ -8,7 +9,7 @@ st.set_page_config(
     page_icon="assistant"
 )
 
-openai_api_key = 'sk-proj-qcZwlpSC8FiUIWOe23zET3BlbkFJlJGBuF4BZDp4UrfwpDAA'
+os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
 
 # Define LLM model
 def generate_response(input_text):
