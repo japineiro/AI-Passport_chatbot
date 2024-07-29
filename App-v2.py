@@ -93,6 +93,3 @@ with st.form(key='response_form'):
         response = generate_response(user_input)
         st.session_state.messages.append({"role": "user", "content": user_input})
         st.session_state.messages.append({"role": "assistant", "content": response})
-        st.experimental_rerun()
-
-
