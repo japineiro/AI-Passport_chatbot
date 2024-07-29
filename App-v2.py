@@ -1,7 +1,7 @@
 import streamlit as st
 from langchain_community.llms import OpenAI
+import pyperclip
 import os
-import streamlit.components.v1 as components
 
 st.set_page_config(
     layout="wide",
@@ -25,14 +25,7 @@ def generate_response(input_text):
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Function to create a copy-to-clipboard button
-def clipboard_button(text, idx):
-    components.html(f"""
-    <input type="text" value="{text}" id="input_{idx}" style="position: absolute; left: -9999px;">
-    <button onclick='navigator.clipboard.writeText(document.getElementById("input_{idx}").value)'>Copy</button>
-    """, height=50)
-
-# CSS for styling
+# CSS to ensure buttons are of the same size, text is centered, and spacing is equal
 st.markdown("""
 <style>
     .stSubheader {
@@ -48,6 +41,7 @@ st.markdown("""
         padding-top: 1rem;
         padding-bottom: 1rem;
     }
+    /* Styling for buttons to ensure uniformity and spacing */
     div[data-testid="stColumns"] > div {
         padding-right: 10px; /* Right padding on each column except the last one */
     }
@@ -78,8 +72,9 @@ for i, message in enumerate(reversed(st.session_state.messages)):
     elif message["role"] == "assistant":
         col1, col2 = st.columns([4, 1])
         col1.markdown(f"<span style='color: green;'>**Assistant:** {message['content']}</span>", unsafe_allow_html=True)
-        clipboard_button(message['content'], i)
-
+        if col2.button("📋", key=f"copy_assistant_{i}"):
+            pyperclip.copy(message['content'])
+            st.success("Copied to clipboard!")
 # Export conversation button
 if st.session_state.messages:
     chat_history = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state.messages])
@@ -89,7 +84,6 @@ if st.session_state.messages:
         file_name='chat_history.txt',
         mime='text/plain'
     )
-
 # User input and response form
 with st.form(key='response_form'):
     user_input = st.text_area('Enter your question here:', 'How can I help you today?', label_visibility='collapsed')
