@@ -2,15 +2,13 @@ import streamlit as st
 from langchain_community.llms import OpenAI
 import os
 
-st.set_page_config(
-    layout="wide",
-    page_title="AI Passport Chatbot",
-    page_icon="assistant"
-)
+# Setting the page config
+st.set_page_config(layout="wide", page_title="AI Passport Chatbot", page_icon="assistant")
 
+# Getting API Key from environment
 os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
 
-# Define LLM model
+# Define the model for generating responses
 def generate_response(input_text):
     llm = OpenAI(
         model_name='gpt-3.5-turbo-instruct',
@@ -20,11 +18,11 @@ def generate_response(input_text):
     )
     return llm(input_text)
 
-# Initialize session state for messages
+# Initializing session state for chat messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# CSS to ensure buttons are of the same size, text is centered, and spacing is equal
+# Styling for the app
 st.markdown("""
 <style>
     .stSubheader {
@@ -40,29 +38,29 @@ st.markdown("""
         padding-top: 1rem;
         padding-bottom: 1rem;
     }
-    /* Styling for buttons to ensure uniformity and spacing */
     div[data-testid="stColumns"] > div {
-        padding-right: 10px; /* Right padding on each column except the last one */
+        padding-right: 10px;
     }
     div[data-testid="stColumns"] > div:last-child {
-        padding-right: 0px; /* No padding on the right for the last column */
+        padding-right: 0px;
     }
     div[data-testid="stColumns"] > div > div.stButton > button {
-        height: 50px; /* Consistent height */
-        width: 100%; /* Full width */
-        line-height: 50px; /* Center text vertically */
-        text-align: center; /* Center text horizontally */
-        font-size: 16px; /* Consistent font size */
-        margin-top: 5px; /* Top margin for visual spacing */
-        border-radius: 5px; /* Rounded corners */
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow for 3D effect */
+        height: 50px;
+        width: 100%;
+        line-height: 50px;
+        text-align: center;
+        font-size: 16px;
+        margin-top: 5px;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 </style>
 """, unsafe_allow_html=True)
 
+# Creating subheader
 st.subheader("MedChat LLM")
 
-# Display chat history
+# Chat history display
 st.markdown("***Chat History***")
 for i, message in enumerate(reversed(st.session_state.messages)):
     if message["role"] == "user":
@@ -71,24 +69,18 @@ for i, message in enumerate(reversed(st.session_state.messages)):
     elif message["role"] == "assistant":
         col1, col2 = st.columns([4, 1])
         col1.markdown(f"<span style='color: green;'>**Assistant:** {message['content']}</span>", unsafe_allow_html=True)
-        # Button to copy content
-        col2.markdown(f"<button onclick=\"navigator.clipboard.writeText('{message['content']}')\" style=\"cursor: pointer; padding: 5px 10px; border: none; background-color: #4CAF50; color: white; border-radius: 5px;\">📋 Copy</button>", unsafe_allow_html=True)
+        button_html = f"<button onclick=\"navigator.clipboard.writeText('{message['content']}')\">📋 Copy</button>"
+        col2.markdown(button_html, unsafe_allow_html=True)
 
-# Export conversation button
+# Export conversation
 if st.session_state.messages:
     chat_history = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state.messages])
-    st.download_button(
-        label="Export Conversation",
-        data=chat_history,
-        file_name='chat_history.txt',
-        mime='text/plain'
-    )
+    st.download_button("Export Conversation", chat_history, file_name='chat_history.txt', mime='text/plain')
 
-# User input and response form
+# User input and form for response
 with st.form(key='response_form'):
     user_input = st.text_area('Enter your question here:', 'How can I help you today?', label_visibility='collapsed')
     submit_button = st.form_submit_button("Respond")
-
     if submit_button and user_input:
         response = generate_response(user_input)
         st.session_state.messages.append({"role": "user", "content": user_input})
