@@ -25,23 +25,12 @@ def generate_response(input_text):
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# JavaScript clipboard function
+# Function to create a copy-to-clipboard button
 def clipboard_button(text, idx):
-    button_html = f"""
-    <textarea id='text_{idx}' style='opacity: 0;'>{text}</textarea>
-    <button onclick='copyText{idx}()'>📋</button>
-    <script>
-    function copyText{idx}() {{
-        var copyText = document.getElementById("text_{idx}");
-        copyText.style.opacity = 1;
-        copyText.select();
-        document.execCommand("copy");
-        copyText.style.opacity = 0;
-        alert("Copied to clipboard!");
-    }}
-    </script>
-    """
-    components.html(button_html, height=30)
+    components.html(f"""
+    <input type="text" value="{text}" id="input_{idx}" style="position: absolute; left: -9999px;">
+    <button onclick='navigator.clipboard.writeText(document.getElementById("input_{idx}").value)'>Copy</button>
+    """, height=50)
 
 # CSS for styling
 st.markdown("""
