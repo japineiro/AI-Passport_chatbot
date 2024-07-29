@@ -1,6 +1,5 @@
 import streamlit as st
 from langchain_community.llms import OpenAI
-import pyperclip
 import os
 
 st.set_page_config(
@@ -65,16 +64,12 @@ st.subheader("MedChat LLM")
 
 # Display chat history
 st.markdown("***Chat History***")
-for i, message in enumerate(reversed(st.session_state.messages)):
+for message in reversed(st.session_state.messages):
     if message["role"] == "user":
-        col1, col2 = st.columns([4, 1])
-        col1.markdown(f"<span style='color: blue;'>**You:** {message['content']}</span>", unsafe_allow_html=True)
+        st.markdown(f"<span style='color: blue;'>**You:** {message['content']}</span>", unsafe_allow_html=True)
     elif message["role"] == "assistant":
-        col1, col2 = st.columns([4, 1])
-        col1.markdown(f"<span style='color: green;'>**Assistant:** {message['content']}</span>", unsafe_allow_html=True)
-        if col2.button("📋", key=f"copy_assistant_{i}"):
-            pyperclip.copy(message['content'])
-            st.success("Copied to clipboard!")
+        st.markdown(f"<span style='color: green;'>**Assistant:** {message['content']}</span>", unsafe_allow_html=True)
+
 # Export conversation button
 if st.session_state.messages:
     chat_history = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state.messages])
@@ -84,6 +79,7 @@ if st.session_state.messages:
         file_name='chat_history.txt',
         mime='text/plain'
     )
+
 # User input and response form
 with st.form(key='response_form'):
     user_input = st.text_area('Enter your question here:', 'How can I help you today?', label_visibility='collapsed')
