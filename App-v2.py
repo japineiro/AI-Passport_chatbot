@@ -8,14 +8,14 @@ st.set_page_config(
     page_icon="assistant"
 )
 
-openai_api_key = 'sk-proj-PoS1slcYlB7i4iCCAE1DT3BlbkFJiHdbcCpYFkS9OKYJCqq1'
+openai_api_key = 'sk-proj-qcZwlpSC8FiUIWOe23zET3BlbkFJlJGBuF4BZDp4UrfwpDAA'
 
 # Define LLM model
 def generate_response(input_text):
     llm = OpenAI(
         model_name='gpt-3.5-turbo-instruct',
         temperature=0.7,
-        max_tokens=100,
+        max_tokens=-1,
         openai_api_key=openai_api_key
     )
     return llm(input_text)
@@ -61,23 +61,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.subheader("MedChat LLM")
-
-# Displaying example prompts
-example_prompts = [
-    "What are common treatments for Type-2 Diabetes?",
-    "Summarize the key findings from a recent medical research.",
-    "Create a detailed clinical case study for severe heart failure."
-]
-
-st.markdown("***Example Prompts***")
-prompt_col = st.columns([1, 1, 1])  # Equal distribution of space among columns
-for i, example_prompt in enumerate(example_prompts):
-    with prompt_col[i]:
-        button_pressed = st.button(example_prompt, key=f'prompt_{i}')
-        if button_pressed:
-            response = generate_response(example_prompt)
-            st.session_state.messages.append({"role": "user", "content": example_prompt})
-            st.session_state.messages.append({"role": "assistant", "content": response})
 
 # Display chat history
 st.markdown("***Chat History***")
