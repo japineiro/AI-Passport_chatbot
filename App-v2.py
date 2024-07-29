@@ -1,6 +1,5 @@
 import streamlit as st
 from langchain_community.llms import OpenAI
-import pyperclip
 import os
 
 st.set_page_config(
@@ -9,6 +8,7 @@ st.set_page_config(
     page_icon="assistant"
 )
 
+# Set your OpenAI API key in the Streamlit secrets
 os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
 
 # Define LLM model
@@ -41,22 +41,21 @@ st.markdown("""
         padding-top: 1rem;
         padding-bottom: 1rem;
     }
-    /* Styling for buttons to ensure uniformity and spacing */
     div[data-testid="stColumns"] > div {
-        padding-right: 10px; /* Right padding on each column except the last one */
+        padding-right: 10px;
     }
     div[data-testid="stColumns"] > div:last-child {
-        padding-right: 0px; /* No padding on the right for the last column */
+        padding-right: 0px;
     }
     div[data-testid="stColumns"] > div > div.stButton > button {
-        height: 50px; /* Consistent height */
-        width: 100%; /* Full width */
-        line-height: 50px; /* Center text vertically */
-        text-align: center; /* Center text horizontally */
-        font-size: 16px; /* Consistent font size */
-        margin-top: 5px; /* Top margin for visual spacing */
-        border-radius: 5px; /* Rounded corners */
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow for 3D effect */
+        height: 50px;
+        width: 100%;
+        line-height: 50px;
+        text-align: center;
+        font-size: 16px;
+        margin-top: 5px;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -72,9 +71,9 @@ for i, message in enumerate(reversed(st.session_state.messages)):
     elif message["role"] == "assistant":
         col1, col2 = st.columns([4, 1])
         col1.markdown(f"<span style='color: green;'>**Assistant:** {message['content']}</span>", unsafe_allow_html=True)
-        if col2.button("📋", key=f"copy_assistant_{i}"):
-            pyperclip.copy(message['content'])
-            st.success("Copied to clipboard!")
+        button_id = f"copy_assistant_{i}"
+        col2.markdown(f"<button onclick=\"navigator.clipboard.writeText('{message['content']}')\">Copy</button>", unsafe_allow_html=True)
+
 # Export conversation button
 if st.session_state.messages:
     chat_history = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state.messages])
@@ -84,6 +83,7 @@ if st.session_state.messages:
         file_name='chat_history.txt',
         mime='text/plain'
     )
+
 # User input and response form
 with st.form(key='response_form'):
     user_input = st.text_area('Enter your question here:', 'How can I help you today?', label_visibility='collapsed')
