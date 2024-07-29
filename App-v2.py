@@ -1,7 +1,7 @@
 import streamlit as st
 from langchain_community.llms import OpenAI
-import pyperclip
 import os
+import streamlit.components.v1 as components
 
 st.set_page_config(
     layout="wide",
@@ -25,7 +25,25 @@ def generate_response(input_text):
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# CSS to ensure buttons are of the same size, text is centered, and spacing is equal
+# JavaScript clipboard function
+def clipboard_button(text, idx):
+    button_html = f"""
+    <textarea id='text_{idx}' style='opacity: 0;'>{text}</textarea>
+    <button onclick='copyText{idx}()'>📋</button>
+    <script>
+    function copyText{idx}() {{
+        var copyText = document.getElementById("text_{idx}");
+        copyText.style.opacity = 1;
+        copyText.select();
+        document.execCommand("copy");
+        copyText.style.opacity = 0;
+        alert("Copied to clipboard!");
+    }}
+    </script>
+    """
+    components.html(button_html, height=30)
+
+# CSS for styling
 st.markdown("""
 <style>
     .stSubheader {
@@ -41,7 +59,6 @@ st.markdown("""
         padding-top: 1rem;
         padding-bottom: 1rem;
     }
-    /* Styling for buttons to ensure uniformity and spacing */
     div[data-testid="stColumns"] > div {
         padding-right: 10px; /* Right padding on each column except the last one */
     }
@@ -72,9 +89,8 @@ for i, message in enumerate(reversed(st.session_state.messages)):
     elif message["role"] == "assistant":
         col1, col2 = st.columns([4, 1])
         col1.markdown(f"<span style='color: green;'>**Assistant:** {message['content']}</span>", unsafe_allow_html=True)
-        if col2.button("📋", key=f"copy_assistant_{i}"):
-            pyperclip.copy(message['content'])
-            st.success("Copied to clipboard!")
+        clipboard_button(message['content'], i)
+
 # Export conversation button
 if st.session_state.messages:
     chat_history = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state.messages])
@@ -84,6 +100,7 @@ if st.session_state.messages:
         file_name='chat_history.txt',
         mime='text/plain'
     )
+
 # User input and response form
 with st.form(key='response_form'):
     user_input = st.text_area('Enter your question here:', 'How can I help you today?', label_visibility='collapsed')
