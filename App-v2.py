@@ -13,6 +13,14 @@ st.set_page_config(
     page_title="AI Passport Chatbot",
     page_icon="assistant"
 )
+st.markdown("""
+<style>
+    /* Adjust sidebar width */
+    .css-1d391kg {
+        width: 25px!important;  /* Set this to your desired width */
+    }
+</style>
+""", unsafe_allow_html=True)
 os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 # Function to encode the image
