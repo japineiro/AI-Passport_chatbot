@@ -22,8 +22,8 @@ st.set_page_config(
     page_icon="assistant"
 )
 
-# os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
-# client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
+os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 
 # Function to encode the image
 def encode_image(image_file):
