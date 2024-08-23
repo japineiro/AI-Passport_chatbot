@@ -1,6 +1,7 @@
 streamlit
 langchain-community
-pyperclip
 openai
-tiktoken
 pypdf
+reportlab
+pdfrw
+
